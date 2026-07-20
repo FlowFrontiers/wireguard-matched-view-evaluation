@@ -1,0 +1,92 @@
+dataset:
+  input_root: data/raw
+  output_dir: data/processed
+  sessions:
+    1:
+      flows: session1/session1_flows.parquet
+      flows_sha256: 9d9420befaa47016cdf5867bf99bd28263af7fa1ccba4eb0228b5c388ed6758b
+      packet_matches: session1/session1_packet_matches.parquet
+      packet_matches_sha256: ea97a81acb4cc308164cc6ba16f2cee47f5b18a6e9f00fc4b95d0621a6ac3512
+    2:
+      flows: session2/session2_flows.parquet
+      flows_sha256: 457c462e1caf0e62deab35438280e39a33f91e0648796de8e486ec19f7f1edd9
+      packet_matches: session2/session2_packet_matches.parquet
+      packet_matches_sha256: dc6d9712f465a700e7cff9dc40e36608e5134bb2191e945f131b1474ceb37667
+  minimum_class_support: 200
+  maximum_sequence_length: 80
+  packet_batch_size: 500000
+  aggregation_partitions: 64
+  assignment_padding_ms: 2000.0
+  expected_retained_rows: 226281
+  expected_classes:
+    - Chat
+    - Cloud
+    - Collaborative
+    - ConnCheck
+    - Database
+    - Download
+    - Email
+    - Network
+    - SocialNetwork
+    - SoftwareUpdate
+    - System
+    - Unspecified
+    - VoIP
+    - Web
+
+features:
+  prefix_length: 50
+  channels: [direction, size, iat_ms]
+  log_transform_magnitudes: true
+
+evaluation:
+  output_root: outputs/runs
+  seed: 42
+  training_view: inner
+  test_view: outer
+  expected_pair_count: 226281
+  model_ids:
+    - rf_matched_flow_stats
+    - xgboost_matched_flow_stats
+    - rf_flattened_splt
+    - xgboost_flattened_splt
+    - cnn1d_sequential_splt
+  random_forest:
+    n_estimators: 500
+    max_depth: null
+    class_weight: balanced
+  xgboost:
+    n_estimators: 500
+    max_depth: 6
+    subsample: 0.8
+    colsample_bytree: 0.8
+    matched_flow_stats_learning_rate: 0.05
+    flattened_splt_learning_rate: 0.1
+  cnn1d:
+    batch_size: 1024
+    maximum_epochs: 50
+    validation_fraction: 0.1
+    learning_rate: 0.0008
+    dropout: 0.4
+    focal_gamma: 2.0
+    focal_alpha: 0.25
+    early_stopping_patience: 6
+    scheduler_patience: 3
+    augmentation_mask_probability: 0.05
+    augmentation_noise_stddev: 0.02
+    augmentation_seed: 99
+    expected_trainable_parameters: 550158
+    expected_total_parameters: 551438
+
+analysis:
+  output_dir: outputs/analysis
+  bootstrap_replicates: 1000
+  confidence_level: 0.95
+  bootstrap_seed: 42
+  precision_recall_grid_points: 500
+  primary_metrics: [balanced_accuracy, macro_f1]
+  interval_metrics: [accuracy, balanced_accuracy, macro_f1, weighted_f1]
+  key_per_class_models:
+    - cnn1d_sequential_splt
+    - xgboost_matched_flow_stats
+    - xgboost_flattened_splt

@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wireguard-matched-view-evaluation"
+version = "0.1.0"
+description = "Reproducible matched-view evaluation for WireGuard traffic classification"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+  { name = "Yasameen Sajid Razooqi" },
+  { name = "Adrian Pekar" },
+]
+dependencies = [
+  "numpy>=2.0,<3",
+  "pandas>=2.2,<3",
+  "pyarrow>=17,<24",
+  "PyYAML>=6,<7",
+  "scikit-learn>=1.9,<2",
+  "tensorflow==2.20.0",
+  "xgboost==3.2.0",
+  "joblib>=1.5,<2",
+  "matplotlib>=3.10,<4",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8,<9",
+  "ruff>=0.9,<1",
+]
+
+[project.scripts]
+wgme = "matched_view_eval.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
