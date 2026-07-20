@@ -1,0 +1,134 @@
+{
+  "artifacts": {
+    "bootstrap_intervals.csv": {
+      "bytes": 2994,
+      "sha256": "96f5a761d1660619d1a89076addab9567b75ba8e110c13106af65938df0b0d84"
+    },
+    "cnn1d_confused_pairs.csv": {
+      "bytes": 3185,
+      "sha256": "fdc6d5000abc6e2cee8dc10808454291e81d729492e3429b97120159725fa7a9"
+    },
+    "confusion_matrices.npz": {
+      "bytes": 2324,
+      "sha256": "3355d70f4a67183b816e4c485eb8fb40fc738472b8b2d5291eba015e2c182e9b"
+    },
+    "figures/cnn1d_confusion_matrix.pdf": {
+      "bytes": 19832,
+      "sha256": "ecb1196310ab6d4a0275bbc299a8803b150617251e6551c1dd4fcb1ffa126ce3"
+    },
+    "figures/cnn1d_confusion_matrix.png": {
+      "bytes": 179153,
+      "sha256": "5d7be897343b2ce807aba36a2eeeed2912de84db587c302f019e9e5ac6f024a4"
+    },
+    "figures/macro_precision_recall.pdf": {
+      "bytes": 19873,
+      "sha256": "9e9540c3dd98460345ea39ec5a89c21800e8d598211a3439257ed49b36d25b7b"
+    },
+    "figures/macro_precision_recall.png": {
+      "bytes": 98853,
+      "sha256": "f0e99934a6398eb16008819eb78936782a4490faa6b1b497019d8532bad05f1c"
+    },
+    "figures/per_class_f1.pdf": {
+      "bytes": 18108,
+      "sha256": "805f112bb7d7e0d3e731988b5cad81cd22ec1dd180f4b2266777ba14f19b5b3c"
+    },
+    "figures/per_class_f1.png": {
+      "bytes": 147566,
+      "sha256": "050a3dd2651fe69b8b06466a7c2b20bf0da6914289020f00440ba883c1f86420"
+    },
+    "latex/cross_domain_table.tex": {
+      "bytes": 1130,
+      "sha256": "47eb34d625cabee70b27a8549d59e74f5a17f541e7632d29fcfa7db878bcff03"
+    },
+    "latex/results_macros.tex": {
+      "bytes": 1135,
+      "sha256": "4d93285b593d21a97db673c20bfa44dae6c81c1846ad183bc71ddb45dffdbf14"
+    },
+    "metrics.csv": {
+      "bytes": 748,
+      "sha256": "4863622d4c30d409aeb932e4875334bb901d120c4bbd2d6ccc149d0bd5b28463"
+    },
+    "per_class_metrics.csv": {
+      "bytes": 7662,
+      "sha256": "fc8bc4263e168746d453d8d2f740ba74a16bb1eb001c28fe665ed074cfc13163"
+    },
+    "precision_recall_curves.csv": {
+      "bytes": 149870,
+      "sha256": "19a93194018cc029c3efe9651ee789ca589c4afdc7062963068d0a9324dc8f41"
+    }
+  },
+  "bootstrap": {
+    "average_precision_interval": false,
+    "confidence_level": 0.95,
+    "interval_metrics": [
+      "accuracy",
+      "balanced_accuracy",
+      "macro_f1",
+      "weighted_f1"
+    ],
+    "method": "paired pair-level nonparametric bootstrap via multinomial state counts",
+    "replicates": 1000,
+    "seed": 42
+  },
+  "class_order": [
+    "Chat",
+    "Cloud",
+    "Collaborative",
+    "ConnCheck",
+    "Database",
+    "Download",
+    "Email",
+    "Network",
+    "SocialNetwork",
+    "SoftwareUpdate",
+    "System",
+    "Unspecified",
+    "VoIP",
+    "Web"
+  ],
+  "created_utc": "2026-07-20T05:58:26.412749+00:00",
+  "git": {
+    "dirty": false,
+    "revision": "fcf7f2d4fbcf607b303133a9ebde600f23c41745",
+    "status_available": true
+  },
+  "metrics": [
+    "accuracy",
+    "balanced_accuracy",
+    "macro_f1",
+    "weighted_f1",
+    "macro_average_precision"
+  ],
+  "model_order": [
+    "rf_matched_flow_stats",
+    "xgboost_matched_flow_stats",
+    "rf_flattened_splt",
+    "xgboost_flattened_splt",
+    "cnn1d_sequential_splt"
+  ],
+  "package_version": "0.1.0",
+  "pair_count": 226281,
+  "run_inputs": {
+    "cnn1d_sequential_splt": {
+      "predictions_sha256": "c5f31d4c03e8e9b61100e733b33703be5a02bd2267475c73a74d4b67bbeef9b1",
+      "run_json_sha256": "c73108887dbaafc77d5b983ca12c1b01011d4c18dcd7b2affd6237f5457b4178"
+    },
+    "rf_flattened_splt": {
+      "predictions_sha256": "f6c968f9e5b1b31ecebb1e56d204435f5796ae589445e5d1d424dc6ba311febf",
+      "run_json_sha256": "1a370d33145aff39683d3dcfc6dff0f6b99251125118fbd1988434d87849cedf"
+    },
+    "rf_matched_flow_stats": {
+      "predictions_sha256": "d80e0dde97a8e2b61b00309414954e4dc6f2d8377313221246b6fe2baa62e827",
+      "run_json_sha256": "9a06e9d53ecb4cefd3006c96c8268c8314c2c4a8554fbc32ba43bbea377910d7"
+    },
+    "xgboost_flattened_splt": {
+      "predictions_sha256": "0289a6ba27d18bf86dd706cac11f26c5798130e29dcd0641bc980737de437014",
+      "run_json_sha256": "b58ea998f2a52f3436175e87df80a917903804094f27bbe9de3c6fd088aa3a43"
+    },
+    "xgboost_matched_flow_stats": {
+      "predictions_sha256": "c54c8f7f4d09b49000e2d98425bd367df9e861a6cc8b69417980e3dd5bdd197a",
+      "run_json_sha256": "2507e22aed7d9cec8b6f1316197732f31f7a99b610060dd283e9b9559d0ff1ad"
+    }
+  },
+  "schema_version": 1
+}

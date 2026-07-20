@@ -5,6 +5,7 @@ import os
 import shutil
 import tempfile
 import uuid
+from collections.abc import Mapping
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -29,6 +30,11 @@ from matched_view_eval.training import (
 )
 
 ANALYSIS_MANIFEST_FILENAME = "analysis_manifest.json"
+# NumPy's multinomial sampler is not byte-identical across ARM and x86. Keep
+# this tolerance local to replayed bootstrap summaries; point metrics remain
+# subject to the strict tolerances below.
+BOOTSTRAP_VALIDATION_RTOL = 0.0
+BOOTSTRAP_VALIDATION_ATOL = 2e-6
 
 MODEL_LABELS = {
     "rf_matched_flow_stats": ("RF", "FlowFeatures"),
@@ -523,6 +529,7 @@ def validate_analysis_directory(
     bootstrap_replicates: int = 1_000,
     confidence_level: float = 0.95,
     bootstrap_seed: int = 42,
+    allowed_missing_run_artifacts: Mapping[str, frozenset[str]] | None = None,
 ) -> dict[str, Any]:
     manifest_path = path / ANALYSIS_MANIFEST_FILENAME
     if not manifest_path.is_file():
@@ -552,10 +559,14 @@ def validate_analysis_directory(
     }
     if set(manifest.get("artifacts", {})) != required:
         raise PipelineInvariantError("Analysis artifact inventory is incomplete or unexpected")
-    metrics = pd.read_csv(path / "metrics.csv")
-    intervals = pd.read_csv(path / "bootstrap_intervals.csv")
-    per_class = pd.read_csv(path / "per_class_metrics.csv")
-    curves = pd.read_csv(path / "precision_recall_curves.csv")
+    metrics = pd.read_csv(path / "metrics.csv", float_precision="round_trip")
+    intervals = pd.read_csv(
+        path / "bootstrap_intervals.csv", float_precision="round_trip"
+    )
+    per_class = pd.read_csv(path / "per_class_metrics.csv", float_precision="round_trip")
+    curves = pd.read_csv(
+        path / "precision_recall_curves.csv", float_precision="round_trip"
+    )
     if tuple(metrics["model_id"]) != expected_models or len(metrics) != 5:
         raise PipelineInvariantError("Metric table model coverage is invalid")
     if len(intervals) != len(expected_models) * len(INTERVAL_METRICS):
@@ -586,7 +597,12 @@ def validate_analysis_directory(
     if run_root is not None:
         for model_id in expected_models:
             run_dir = run_root / model_id
-            validate_run_directory(run_dir)
+            validate_run_directory(
+                run_dir,
+                allowed_missing_artifacts=(allowed_missing_run_artifacts or {}).get(
+                    model_id, frozenset()
+                ),
+            )
             recorded_input = manifest.get("run_inputs", {}).get(model_id, {})
             if recorded_input != {
                 "run_json_sha256": sha256_file(run_dir / RUN_FILENAME),
@@ -631,7 +647,10 @@ def validate_analysis_directory(
                     ("standard_deviation", bootstrap.standard_deviation[metric]),
                 ):
                     if not np.isclose(
-                        float(interval[column]), expected, rtol=1e-12, atol=1e-12
+                        float(interval[column]),
+                        expected,
+                        rtol=BOOTSTRAP_VALIDATION_RTOL,
+                        atol=BOOTSTRAP_VALIDATION_ATOL,
                     ):
                         raise PipelineInvariantError(
                             f"Bootstrap artifact disagrees with predictions: "
@@ -685,7 +704,9 @@ def validate_analysis_directory(
         expected_pairs = _top_confused_pairs(
             matrices["cnn1d_sequential_splt"], tuple(manifest["class_order"])
         ).reset_index(drop=True)
-        observed_pairs = pd.read_csv(path / "cnn1d_confused_pairs.csv")
+        observed_pairs = pd.read_csv(
+            path / "cnn1d_confused_pairs.csv", float_precision="round_trip"
+        )
         if not observed_pairs.equals(expected_pairs):
             numeric = ("count", "true_class_support", "error_rate")
             identity = ("true_category", "predicted_category")

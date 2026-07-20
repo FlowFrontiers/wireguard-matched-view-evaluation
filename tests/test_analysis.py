@@ -27,6 +27,7 @@ from matched_view_eval.metrics import (
     paired_bootstrap_confusion_metrics,
 )
 from matched_view_eval.orchestration import _training_command, preflight
+from matched_view_eval.release import validate_release_directory
 from matched_view_eval.training import PREDICTIONS_FILENAME, RUN_FILENAME, _write_predictions
 from matched_view_eval.training_data import pair_id_sha256
 
@@ -210,6 +211,61 @@ def test_analysis_pipeline_and_content_validation(
             expected_models=config.training.model_ids,
             run_root=config.training.output_root,
         )
+
+
+def test_bootstrap_replay_allows_only_cross_platform_roundoff(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    config = _synthetic_analysis_config(tmp_path)
+    monkeypatch.setattr(
+        analysis_module,
+        "git_provenance",
+        lambda _: {"revision": "test", "dirty": False, "status_available": True},
+    )
+    analyze_runs(config)
+    intervals_path = config.output_dir / "bootstrap_intervals.csv"
+    intervals = pd.read_csv(intervals_path, float_precision="round_trip")
+    intervals.loc[0, "bootstrap_mean"] += 5e-7
+    intervals.to_csv(intervals_path, index=False)
+    manifest_path = config.output_dir / ANALYSIS_MANIFEST_FILENAME
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["artifacts"]["bootstrap_intervals.csv"]["sha256"] = sha256_file(
+        intervals_path
+    )
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    assert validate_analysis_directory(
+        config.output_dir,
+        expected_models=config.training.model_ids,
+        run_root=config.training.output_root,
+    )["valid"]
+
+    intervals.loc[0, "bootstrap_mean"] += 1e-4
+    intervals.to_csv(intervals_path, index=False)
+    manifest["artifacts"]["bootstrap_intervals.csv"]["sha256"] = sha256_file(
+        intervals_path
+    )
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    with pytest.raises(PipelineInvariantError, match="Bootstrap artifact disagrees"):
+        validate_analysis_directory(
+            config.output_dir,
+            expected_models=config.training.model_ids,
+            run_root=config.training.output_root,
+        )
+
+
+def test_committed_release_artifacts_validate() -> None:
+    root = Path(__file__).parents[1]
+    config = load_analysis_config(CONFIG_PATH)
+    result = validate_release_directory(
+        root / "artifacts" / "fcf7f2d",
+        expected_models=config.training.model_ids,
+        bootstrap_replicates=config.bootstrap_replicates,
+        confidence_level=config.confidence_level,
+        bootstrap_seed=config.bootstrap_seed,
+    )
+    assert result["valid"] is True
+    assert result["pair_count"] == 226_281
+    assert result["omitted_model_artifact_count"] == 4
 
 
 def test_training_commands_use_isolated_python_processes(tmp_path: Path) -> None:

@@ -1,0 +1,62 @@
+campaign_start_utc=2026-07-20T05:40:13Z
+{
+  "analysis": {
+    "artifact_count": 14,
+    "model_count": 5,
+    "pair_count": 226281,
+    "valid": true
+  },
+  "analysis_action": "executed",
+  "executed_models": [
+    "rf_matched_flow_stats",
+    "xgboost_matched_flow_stats",
+    "rf_flattened_splt",
+    "xgboost_flattened_splt",
+    "cnn1d_sequential_splt"
+  ],
+  "final": {
+    "analysis_status": "complete",
+    "completed_runs": 5,
+    "git": {
+      "dirty": false,
+      "revision": "fcf7f2d4fbcf607b303133a9ebde600f23c41745",
+      "status_available": true
+    },
+    "pending_runs": 0,
+    "runs": [
+      {
+        "model_id": "rf_matched_flow_stats",
+        "path": "/workspace/wireguard-matched-view-evaluation/outputs/runs/rf_matched_flow_stats",
+        "status": "complete"
+      },
+      {
+        "model_id": "xgboost_matched_flow_stats",
+        "path": "/workspace/wireguard-matched-view-evaluation/outputs/runs/xgboost_matched_flow_stats",
+        "status": "complete"
+      },
+      {
+        "model_id": "rf_flattened_splt",
+        "path": "/workspace/wireguard-matched-view-evaluation/outputs/runs/rf_flattened_splt",
+        "status": "complete"
+      },
+      {
+        "model_id": "xgboost_flattened_splt",
+        "path": "/workspace/wireguard-matched-view-evaluation/outputs/runs/xgboost_flattened_splt",
+        "status": "complete"
+      },
+      {
+        "model_id": "cnn1d_sequential_splt",
+        "path": "/workspace/wireguard-matched-view-evaluation/outputs/runs/cnn1d_sequential_splt",
+        "status": "complete"
+      }
+    ]
+  },
+  "reused_models": []
+}
+{
+  "artifact_count": 14,
+  "model_count": 5,
+  "pair_count": 226281,
+  "valid": true
+}
+campaign_end_utc=2026-07-20T05:58:59Z

@@ -1,0 +1,123 @@
+{
+  "artifacts": {
+    "model.joblib": {
+      "bytes": 902499577,
+      "sha256": "151718bc150d256c903406296d804146a7bca2dcf7006b6af53068d09546f42e"
+    },
+    "predictions.parquet": {
+      "bytes": 3564379,
+      "sha256": "d80e0dde97a8e2b61b00309414954e4dc6f2d8377313221246b6fe2baa62e827"
+    }
+  },
+  "class_order": [
+    "Chat",
+    "Cloud",
+    "Collaborative",
+    "ConnCheck",
+    "Database",
+    "Download",
+    "Email",
+    "Network",
+    "SocialNetwork",
+    "SoftwareUpdate",
+    "System",
+    "Unspecified",
+    "VoIP",
+    "Web"
+  ],
+  "created_utc": "2026-07-20T05:41:54.709313+00:00",
+  "definition": {
+    "class_balance": {
+      "mechanism": "class_weight",
+      "value": "balanced"
+    },
+    "family": "random_forest",
+    "feature_count": 21,
+    "feature_names": [
+      "packets",
+      "bytes",
+      "mean_packet_size",
+      "std_packet_size",
+      "min_iat_ms",
+      "mean_iat_ms",
+      "std_iat_ms",
+      "max_iat_ms",
+      "duration_ms",
+      "dst2src_bytes",
+      "src2dst_bytes",
+      "dst2src_min_iat_ms",
+      "dst2src_mean_iat_ms",
+      "dst2src_std_iat_ms",
+      "dst2src_max_iat_ms",
+      "src2dst_min_iat_ms",
+      "src2dst_mean_iat_ms",
+      "src2dst_std_iat_ms",
+      "src2dst_max_iat_ms",
+      "packet_rate",
+      "byte_rate"
+    ],
+    "hyperparameters": {
+      "max_depth": null,
+      "n_estimators": 500,
+      "n_jobs": -1,
+      "random_state": 42
+    },
+    "model_artifact": "model.joblib",
+    "representation": "matched_flow_stats",
+    "source_medians": [
+      19.0,
+      4275.0,
+      243.0,
+      320.03423875969054,
+      0.014892578125,
+      600.492949695122,
+      2233.1793798428835,
+      11925.6220703125,
+      23286.942138671875,
+      1735.0,
+      1551.0,
+      0.0,
+      411.96188735961914,
+      64.09355486750898,
+      7401.523681640625,
+      0.015869140625,
+      977.0933404737904,
+      154.61800938278333,
+      10111.55810546875,
+      1.6047673973847678,
+      549.4856910810821
+    ]
+  },
+  "environment": {
+    "packages": {
+      "numpy": "2.1.2",
+      "pandas": "2.3.3",
+      "pyarrow": "23.0.1",
+      "scikit-learn": "1.9.0",
+      "tensorflow": "2.20.0",
+      "xgboost": "3.2.0"
+    },
+    "platform": "Linux-6.8.0-62-generic-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "git": {
+    "dirty": false,
+    "revision": "fcf7f2d4fbcf607b303133a9ebde600f23c41745",
+    "status_available": true
+  },
+  "input_hashes": {
+    "canonical": "ca51e8447717224737a86aa24fc5ac889f39b3cb404fbc89fdec58db8cd83e1e",
+    "dataset_manifest": "3d7cf2a7ae80c82efa0683d77f90728f1773a2dcf23d09a277030f0574fd7b86",
+    "feature_audit": "1599817a2a932459cf34a7dad5732138ae90103f2cd906d318544f99f4c227af"
+  },
+  "model_id": "rf_matched_flow_stats",
+  "package_version": "0.1.0",
+  "pair_count": 226281,
+  "pair_ids_sha256": "14e7d8590b4cbd9d1198beef8a06c4110426ade130ac4a9d220cb08e4cdd6620",
+  "protocol": "matched_view_same_flow",
+  "schema_version": 1,
+  "seed": 42,
+  "test_view": "outer",
+  "training_seconds": 19.05263513326645,
+  "training_view": "inner"
+}

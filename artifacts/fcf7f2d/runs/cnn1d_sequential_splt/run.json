@@ -1,0 +1,148 @@
+{
+  "artifacts": {
+    "model.weights.h5": {
+      "bytes": 6712600,
+      "sha256": "fc5360824ddd1fb639a8de298ee7768357f74a8b54c15728bb772be8c944e639"
+    },
+    "model_architecture.json": {
+      "bytes": 20735,
+      "sha256": "6b40ad58d060b2b54a6a705f9f88e5a5f4cbba8ac40ffea0f2d8337939d894e3"
+    },
+    "predictions.parquet": {
+      "bytes": 20509254,
+      "sha256": "c5f31d4c03e8e9b61100e733b33703be5a02bd2267475c73a74d4b67bbeef9b1"
+    },
+    "training_history.csv": {
+      "bytes": 5132,
+      "sha256": "b77a82708fcedb23530ac3e671ceaebda026998e41ba3dca881d9e620cda74b3"
+    }
+  },
+  "class_order": [
+    "Chat",
+    "Cloud",
+    "Collaborative",
+    "ConnCheck",
+    "Database",
+    "Download",
+    "Email",
+    "Network",
+    "SocialNetwork",
+    "SoftwareUpdate",
+    "System",
+    "Unspecified",
+    "VoIP",
+    "Web"
+  ],
+  "created_utc": "2026-07-20T05:58:12.878071+00:00",
+  "definition": {
+    "architecture_artifact": "model_architecture.json",
+    "augmentation": {
+      "direction_perturbed": false,
+      "mask_probability": 0.05,
+      "noise_stddev": 0.02,
+      "padding_perturbed": false,
+      "seed": 99
+    },
+    "class_balance": {
+      "mechanism": "class_weight",
+      "value": [
+        4.056489522747191,
+        2.7974175824175824,
+        2.4370198406050307,
+        57.49632975719932,
+        49.478134110787174,
+        24.82350073135056,
+        41.32548701298701,
+        0.1913972188701801,
+        4.162109135499693,
+        21.940530058177117,
+        13.140534262485483,
+        2.845573440643863,
+        10.302104411169568,
+        0.14601912677619608
+      ]
+    },
+    "device": "gpu",
+    "epochs_completed": 50,
+    "family": "cnn1d",
+    "feature_shape": [
+      50,
+      3
+    ],
+    "history_artifact": "training_history.csv",
+    "model_artifact": "model.weights.h5",
+    "representation": "sequential_splt",
+    "topology": {
+      "attention_heads": 4,
+      "attention_key_dim": 48,
+      "branch_filters": 64,
+      "dense_units": [
+        256,
+        128
+      ],
+      "final_filters": 256,
+      "parallel_kernels": [
+        3,
+        7,
+        11
+      ],
+      "residual_filters": 192,
+      "total_parameters": 551438,
+      "trainable_parameters": 550158
+    },
+    "training_pair_count_after_augmentation": 407304,
+    "training_pair_count_before_augmentation": 203652,
+    "training_pair_ids_sha256": "97171a8947eeabf10cc1970275cbe4201ad8fd299efc8bce25dea32c377d6650",
+    "training_policy": {
+      "batch_size": 1024,
+      "deterministic_operations": true,
+      "dropout": 0.4,
+      "early_stopping_metric": "val_accuracy",
+      "early_stopping_patience": 6,
+      "focal_alpha": 0.25,
+      "focal_gamma": 2.0,
+      "learning_rate": 0.0008,
+      "maximum_epochs": 50,
+      "minimum_learning_rate": 1e-06,
+      "scheduler_factor": 0.5,
+      "scheduler_metric": "val_loss",
+      "scheduler_patience": 3,
+      "shuffle": true,
+      "validation_fraction": 0.1
+    },
+    "validation_pair_count": 22629,
+    "validation_pair_ids_sha256": "10253dd7d5022fd4f666c34f24c13aed0737ebcf7f8a226d7394b804dfda0b3f"
+  },
+  "environment": {
+    "packages": {
+      "numpy": "2.1.2",
+      "pandas": "2.3.3",
+      "pyarrow": "23.0.1",
+      "scikit-learn": "1.9.0",
+      "tensorflow": "2.20.0",
+      "xgboost": "3.2.0"
+    },
+    "platform": "Linux-6.8.0-62-generic-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "git": {
+    "dirty": false,
+    "revision": "fcf7f2d4fbcf607b303133a9ebde600f23c41745",
+    "status_available": true
+  },
+  "input_hashes": {
+    "canonical": "ca51e8447717224737a86aa24fc5ac889f39b3cb404fbc89fdec58db8cd83e1e",
+    "dataset_manifest": "3d7cf2a7ae80c82efa0683d77f90728f1773a2dcf23d09a277030f0574fd7b86",
+    "feature_audit": "1599817a2a932459cf34a7dad5732138ae90103f2cd906d318544f99f4c227af"
+  },
+  "model_id": "cnn1d_sequential_splt",
+  "package_version": "0.1.0",
+  "pair_count": 226281,
+  "pair_ids_sha256": "14e7d8590b4cbd9d1198beef8a06c4110426ade130ac4a9d220cb08e4cdd6620",
+  "protocol": "matched_view_same_flow",
+  "schema_version": 1,
+  "seed": 42,
+  "test_view": "outer",
+  "training_seconds": 480.19248751550913,
+  "training_view": "inner"
+}

@@ -9,4 +9,7 @@ __pycache__/
 data/raw/
 data/processed/*
 !data/processed/.gitkeep
+
+# Fresh reproduction outputs are never tracked. Definitive evidence is stored
+# separately under artifacts/<campaign-revision>/.
 outputs/

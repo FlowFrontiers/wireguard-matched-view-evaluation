@@ -246,6 +246,21 @@ def test_prediction_artifact_validation_recomputes_content(tmp_path: Path) -> No
         validate_run_directory(tmp_path)
 
 
+def test_release_omission_is_explicit_and_model_only(tmp_path: Path) -> None:
+    _make_run(tmp_path)
+    (tmp_path / "model.joblib").unlink()
+    with pytest.raises(PipelineInvariantError, match="artifact hash mismatch"):
+        validate_run_directory(tmp_path)
+    result = validate_run_directory(
+        tmp_path, allowed_missing_artifacts=frozenset({"model.joblib"})
+    )
+    assert result["omitted_artifacts"] == ["model.joblib"]
+    with pytest.raises(PipelineInvariantError, match="prediction artifact cannot be omitted"):
+        validate_run_directory(
+            tmp_path, allowed_missing_artifacts=frozenset({PREDICTIONS_FILENAME})
+        )
+
+
 def test_classical_run_is_published_atomically(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

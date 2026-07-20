@@ -37,6 +37,11 @@ def _parser() -> argparse.ArgumentParser:
     train.add_argument("--force", action="store_true")
     validate_run = subparsers.add_parser("validate-run")
     validate_run.add_argument("path", type=Path)
+    validate_release = subparsers.add_parser("validate-release")
+    validate_release.add_argument(
+        "path", type=Path, nargs="?", default=Path("artifacts/fcf7f2d")
+    )
+    validate_release.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     for command in ("analyze", "validate-analysis"):
         analyze = subparsers.add_parser(command)
         analyze.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
@@ -81,6 +86,20 @@ def main(argv: Sequence[str] | None = None) -> None:
         from matched_view_eval.training import validate_run_directory
 
         result = validate_run_directory(args.path.expanduser().resolve())
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return
+    if args.command == "validate-release":
+        from matched_view_eval.analysis_config import load_analysis_config
+        from matched_view_eval.release import validate_release_directory
+
+        config = load_analysis_config(args.config)
+        result = validate_release_directory(
+            args.path.expanduser().resolve(),
+            expected_models=config.training.model_ids,
+            bootstrap_replicates=config.bootstrap_replicates,
+            confidence_level=config.confidence_level,
+            bootstrap_seed=config.bootstrap_seed,
+        )
         print(json.dumps(result, indent=2, sort_keys=True))
         return
     if args.command in {"analyze", "validate-analysis", "run-all"}:

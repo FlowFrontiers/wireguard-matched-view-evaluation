@@ -1,0 +1,19 @@
+Generated evaluation evidence in this directory is licensed under the
+Creative Commons Attribution 4.0 International License (CC BY 4.0).
+
+License summary and legal code:
+https://creativecommons.org/licenses/by/4.0/
+
+Copyright (c) 2026 Yasameen Sajid Razooqi and Adrian Pekar
+
+The evidence was generated from the separately published WireGuard matched-view
+dataset described in:
+
+Y. S. Razooqi and A. Pekar, "A flow-level dataset of WireGuard tunnel traffic
+with matched encrypted-side features and application labels," Data in Brief,
+vol. 66, article 112696, 2026. https://doi.org/10.1016/j.dib.2026.112696
+
+Dataset archive: https://doi.org/10.5281/zenodo.18945858
+
+When reusing or redistributing this evidence, provide attribution to the above
+dataset and to this evaluation repository.

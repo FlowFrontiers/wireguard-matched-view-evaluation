@@ -351,16 +351,9 @@ def train_model(
         raise
 
 
-def validate_run_directory(path: Path) -> dict[str, Any]:
-    """Validate artifact hashes and prediction/probability consistency."""
-    run_path = path / RUN_FILENAME
-    predictions_path = path / PREDICTIONS_FILENAME
-    if not run_path.is_file() or not predictions_path.is_file():
-        raise FileNotFoundError(f"Incomplete run directory: {path}")
-    run = json.loads(run_path.read_text(encoding="utf-8"))
-    if run.get("model_id") not in MODEL_IDS or run.get("protocol") != "matched_view_same_flow":
-        raise PipelineInvariantError("Run identity is invalid")
-    required_artifacts = {
+def required_run_artifacts(model_id: str) -> frozenset[str]:
+    """Return the exact artifact inventory produced by a completed training run."""
+    required = {
         "rf_matched_flow_stats": {PREDICTIONS_FILENAME, "model.joblib"},
         "rf_flattened_splt": {PREDICTIONS_FILENAME, "model.joblib"},
         "xgboost_matched_flow_stats": {PREDICTIONS_FILENAME, "model.json"},
@@ -371,13 +364,45 @@ def validate_run_directory(path: Path) -> dict[str, Any]:
             "model.weights.h5",
             "training_history.csv",
         },
-    }[run["model_id"]]
+    }
+    try:
+        return frozenset(required[model_id])
+    except KeyError as error:
+        raise PipelineInvariantError(f"Unknown model id: {model_id}") from error
+
+
+def validate_run_directory(
+    path: Path,
+    *,
+    allowed_missing_artifacts: frozenset[str] = frozenset(),
+) -> dict[str, Any]:
+    """Validate artifact hashes and prediction/probability consistency."""
+    run_path = path / RUN_FILENAME
+    predictions_path = path / PREDICTIONS_FILENAME
+    if not run_path.is_file() or not predictions_path.is_file():
+        raise FileNotFoundError(f"Incomplete run directory: {path}")
+    run = json.loads(run_path.read_text(encoding="utf-8"))
+    if run.get("model_id") not in MODEL_IDS or run.get("protocol") != "matched_view_same_flow":
+        raise PipelineInvariantError("Run identity is invalid")
+    required_artifacts = required_run_artifacts(run["model_id"])
+    if not allowed_missing_artifacts <= required_artifacts:
+        raise PipelineInvariantError("Allowed missing run artifacts are invalid")
+    if PREDICTIONS_FILENAME in allowed_missing_artifacts:
+        raise PipelineInvariantError("The prediction artifact cannot be omitted")
     if set(run.get("artifacts", {})) != required_artifacts:
         raise PipelineInvariantError("Run artifact inventory is incomplete or unexpected")
+    omitted: list[str] = []
     for name, metadata in run.get("artifacts", {}).items():
         artifact = path / name
-        if not artifact.is_file() or sha256_file(artifact) != metadata.get("sha256"):
+        if not artifact.is_file():
+            if name in allowed_missing_artifacts:
+                omitted.append(name)
+                continue
             raise PipelineInvariantError(f"Run artifact hash mismatch: {name}")
+        if sha256_file(artifact) != metadata.get("sha256"):
+            raise PipelineInvariantError(f"Run artifact hash mismatch: {name}")
+        if metadata.get("bytes") is not None and artifact.stat().st_size != metadata["bytes"]:
+            raise PipelineInvariantError(f"Run artifact size mismatch: {name}")
     predictions = pd.read_parquet(predictions_path)
     classes = tuple(str(value) for value in run["class_order"])
     probability_columns = _probability_columns(len(classes))
@@ -415,9 +440,12 @@ def validate_run_directory(path: Path) -> dict[str, Any]:
             raise PipelineInvariantError(f"{index_column} is outside the class vocabulary")
         if not np.array_equal(class_array[indices], predictions[label_column].to_numpy()):
             raise PipelineInvariantError(f"{label_column} disagrees with class indices")
-    return {
+    result = {
         "valid": True,
         "model_id": run["model_id"],
         "pair_count": len(predictions),
         "predictions_sha256": sha256_file(predictions_path),
     }
+    if omitted:
+        result["omitted_artifacts"] = sorted(omitted)
+    return result
